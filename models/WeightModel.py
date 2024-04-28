@@ -12,8 +12,8 @@ class Weight(EntityMeta):
     __tablename__ = "weights"
 
     id = Column(Integer)
-    kg = Column(Float)
     userId = Column(Integer)
     creationTime = Column(DateTime(), nullable=False)
+    kg = Column(Float)
 
     PrimaryKeyConstraint(id)

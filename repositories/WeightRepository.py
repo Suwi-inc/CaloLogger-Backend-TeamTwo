@@ -19,9 +19,9 @@ class WeightRepository:
 
     def add_weight(self, user_id: int, kg: float) -> Weight:
         weight = Weight(
-            kg=kg,
             userId=user_id,
-            creationTime=datetime.now()
+            creationTime=datetime.now(),
+            kg=kg
         )
         self.db.add(weight)
         self.db.commit()

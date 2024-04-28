@@ -28,7 +28,7 @@ def gel_all(
 
 
 @MealRouter.delete(
-    "/{id}",
+    "/",
     response_model=str,
     status_code=status.HTTP_200_OK,
     responses={

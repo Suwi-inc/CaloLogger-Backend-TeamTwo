@@ -14,20 +14,14 @@ class WeightService:
     ) -> None:
         self.weight_repository = weight_repository
 
-    def add_weight(self, user_id: int, kg: float) -> WeightSchema:
-        weight = self.weight_repository.add_weight(user_id, kg)
-        return WeightSchema(
-            weight_id=weight.id,
-            weight_kg=weight.kg,
-            time=weight.creationTime
-        )
+    def add_weight(self, user_id: int, kg: float):
+        self.weight_repository.add_weight(user_id, kg)
 
     def get_all_weights(self, user_id: int) -> List[WeightSchema]:
         weights = self.weight_repository.get_all_weights(user_id)
         return [
             WeightSchema(
-                weight_id=weight.id,
-                weight_kg=weight.kg,
+                weight=weight.kg,
                 time=weight.creationTime
             )
             for weight in weights

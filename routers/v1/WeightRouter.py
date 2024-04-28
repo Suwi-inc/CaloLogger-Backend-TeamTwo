@@ -1,105 +1,40 @@
+from typing import List
+
+from fastapi import APIRouter, Depends, status
+
+from schemas.pydantic.WeightSchema import (
+    WeightSchema,
+)
+from services.WeightService import WeightService
+
+WeightRouter = APIRouter(
+    prefix="/v1/weight", tags=["weight"]
+)
+
+
 # TODO
-# from typing import List, Optional
-#
-# from fastapi import APIRouter, Depends, status
-#
-# from schemas.pydantic.MealSchema import MealSchema
-# from schemas.pydantic.BookSchema import (
-#     BookAuthorPostRequestSchema,
-#     BookPostRequestSchema,
-#     BookSchema,
-# )
-# from services.BookService import BookService
-#
-# BookRouter = APIRouter(prefix="/v1/books", tags=["book"])
-#
-#
-# @BookRouter.get("/", response_model=List[BookSchema])
-# def index(
-#     name: Optional[str] = None,
-#     pageSize: Optional[int] = 100,
-#     startIndex: Optional[int] = 0,
-#     bookService: BookService = Depends(),
-# ):
-#     return [
-#         book.normalize()
-#         for book in bookService.list(
-#             name, pageSize, startIndex
-#         )
-#     ]
-#
-#
-# @BookRouter.get("/{id}", response_model=BookSchema)
-# def get(id: int, bookService: BookService = Depends()):
-#     return bookService.get(id).normalize()
-#
-#
-# @BookRouter.post(
-#     "/",
-#     response_model=BookSchema,
-#     status_code=status.HTTP_201_CREATED,
-# )
-# def create(
-#     book: BookPostRequestSchema,
-#     bookService: BookService = Depends(),
-# ):
-#     return bookService.create(book).normalize()
-#
-#
-# @BookRouter.patch("/{id}", response_model=BookSchema)
-# def update(
-#     id: int,
-#     book: BookPostRequestSchema,
-#     bookService: BookService = Depends(),
-# ):
-#     return bookService.update(id, book).normalize()
-#
-#
-# @BookRouter.delete(
-#     "/{id}", status_code=status.HTTP_204_NO_CONTENT
-# )
-# def delete(id: int, bookService: BookService = Depends()):
-#     return bookService.delete(id)
-#
-#
-# @BookRouter.get(
-#     "/{id}/authors/", response_model=List[MealSchema]
-# )
-# def get_authors(
-#     id: int, bookService: BookService = Depends()
-# ):
-#     return [
-#         author.normalize()
-#         for author in bookService.get_authors(id)
-#     ]
-#
-#
-# @BookRouter.post(
-#     "/{id}/authors/", response_model=List[MealSchema]
-# )
-# def add_author(
-#     id: int,
-#     author: BookAuthorPostRequestSchema,
-#     bookService: BookService = Depends(),
-# ):
-#     return [
-#         author.normalize()
-#         for author in bookService.add_author(id, author)
-#     ]
-#
-#
-# @BookRouter.delete(
-#     "/{id}/authors/{author_id}",
-#     response_model=List[MealSchema],
-# )
-# def remove_author(
-#     id: int,
-#     author_id: int,
-#     bookService: BookService = Depends(),
-# ):
-#     return [
-#         author.normalize()
-#         for author in bookService.remove_author(
-#             id, author_id
-#         )
-#     ]
+def get_current_user_id():
+    return 1
+
+
+@WeightRouter.get(
+    "/",
+    response_model=List[WeightSchema],
+    status_code=status.HTTP_200_OK)
+def gel_all(
+        current_user_id: int = Depends(get_current_user_id),
+        weightService: WeightService = Depends()):
+    return weightService.get_all_weights(current_user_id)
+
+
+@WeightRouter.post(
+    "/",
+    response_model=str,
+    status_code=status.HTTP_201_CREATED,
+)
+def create(
+        weight: float,
+        current_user_id: int = Depends(get_current_user_id),
+        weightService: WeightService = Depends()):
+    weightService.add_weight(current_user_id, weight)
+    return "ok"

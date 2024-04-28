@@ -3,6 +3,7 @@ from fastapi import Depends, FastAPI
 from configs.Environment import get_environment_variables
 from metadata.Tags import Tags
 from models.BaseModel import init
+from routers.v1.WeightRouter import WeightRouter
 from routers.v1.MealRouter import MealRouter
 
 # Application Environment Configuration
@@ -17,7 +18,7 @@ app = FastAPI(
 
 # Add Routers
 app.include_router(MealRouter)
-#app.include_router(WeightRouter)
+app.include_router(WeightRouter)
 #app.include_router(UserRouter)
 
 # Initialise Data Model Attributes

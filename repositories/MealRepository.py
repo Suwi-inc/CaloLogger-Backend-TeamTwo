@@ -1,7 +1,7 @@
-from typing import List, Optional
+from typing import List, Optional, Iterable, Type
 
 from fastapi import Depends
-from sqlalchemy.orm import Session, lazyload
+from sqlalchemy.orm import Session, lazyload, Query
 
 from configs.Database import (
     get_db_connection,
@@ -17,37 +17,26 @@ class MealRepository:
     ) -> None:
         self.db = db
 
-    def list(
+    def list_by_user_id(
         self,
-        name: Optional[str],
-        limit: Optional[int],
-        start: Optional[int],
+        user_id: int
     ) -> List[Meal]:
-        query = self.db.query(Meal)
+        query: Query[Meal] = self.db.query(Meal)
 
-        if name:
-            query = query.filter_by(name=name)
+        query = query.filter_by(userId=user_id)
 
-        return query.offset(start).limit(limit).all()
+        return query.all()
 
-    def get(self, author: Meal) -> Meal:
+    def get(self, meal_id: int) -> Meal | None:
         return self.db.get(
             Meal,
-            author.id,
-            options=[lazyload(Meal.books)],
+            meal_id
         )
 
-    def create(self, meal: Meal) -> Meal:
-        self.db.add(meal)
+    def create(self, meal: Iterable[Meal]):
+        self.db.add_all(meal)
         self.db.commit()
-        self.db.refresh(meal)
-        return meal
-
-    def update(self, id: int, author: Meal) -> Meal:
-        author.id = id
-        self.db.merge(author)
-        self.db.commit()
-        return author
+        # self.db.refresh(meal)
 
     def delete(self, author: Meal) -> None:
         self.db.delete(author)

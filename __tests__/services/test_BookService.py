@@ -53,10 +53,10 @@ class TestBookService(TestCase):
         pageSize = 10
         startIndex = 2
 
-        self.bookService.list(name, pageSize, startIndex)
+        self.bookService.list_by_user_id(name, pageSize, startIndex)
 
         # Should call list method on Book Repository
-        self.bookRepository.list.assert_called_once_with(
+        self.bookRepository.list_by_user_id.assert_called_once_with(
             name, pageSize, startIndex
         )
 

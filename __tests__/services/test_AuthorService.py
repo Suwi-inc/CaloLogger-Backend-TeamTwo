@@ -36,7 +36,7 @@ class TestAuthorService(TestCase):
         self.authorRepository.create.assert_called_once()
 
     def test_delete(self):
-        self.authorService.delete(author_id=1)
+        self.authorService.delete(meal_id=1)
 
         # Should call delete method on Author Repository
         self.authorRepository.delete.assert_called_once()
@@ -52,10 +52,10 @@ class TestAuthorService(TestCase):
         pageSize = 10
         startIndex = 2
 
-        self.authorService.list(name, pageSize, startIndex)
+        self.authorService.list_by_user_id(name, pageSize, startIndex)
 
         # Should call list method on Author Repository
-        self.authorRepository.list.assert_called_once_with(
+        self.authorRepository.list_by_user_id.assert_called_once_with(
             name, pageSize, startIndex
         )
 

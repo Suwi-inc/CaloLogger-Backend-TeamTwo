@@ -134,3 +134,6 @@ dmypy.json
 
 # Test data
 test.db
+
+# Nix
+.direnv

@@ -1,9 +1,9 @@
+import datetime
+
 from pydantic import BaseModel
 
 
-class AuthorPostRequestSchema(BaseModel):
-    name: str
-
-
-class MealSchema(AuthorPostRequestSchema):
-    id: int
+class MealSchema(BaseModel):
+    time: datetime.datetime
+    meal_id: int
+    calorie_ninjas_response: str

@@ -42,12 +42,12 @@ class TestAuthorRepository(TestCase):
 
     @patch("models.AuthorModel.Author", autospec=True)
     def test_list(self, Author):
-        self.authorRepository.list(None, 100, 0)
+        self.authorRepository.list_by_user_id(None, 100, 0)
 
         # Should call query method on Session
         self.session.query.assert_called_once()
 
-        self.authorRepository.list("Stephen Knight", 100, 0)
+        self.authorRepository.list_by_user_id("Stephen Knight", 100, 0)
 
         # Should call filter_by method on QueryResponse
         self.session.query(

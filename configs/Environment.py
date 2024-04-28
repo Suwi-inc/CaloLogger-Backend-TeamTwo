@@ -15,6 +15,7 @@ class EnvironmentSettings(BaseSettings):
     APP_NAME: str
     DATABASE_PATH: str
     DEBUG_MODE: bool
+    CALORIE_NINJAS_API_KEY: str
 
     class Config:
         env_file = get_env_filename()

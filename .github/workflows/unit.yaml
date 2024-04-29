@@ -16,6 +16,4 @@ jobs:
       - run: |
           cp .env.test .env
       - run: |
-          nix develop --command \
-            poetry install \
-            poetry run pytest __tests__/*/*.py
+          nix develop --command bash -c 'poetry install && poetry run pytest __tests__/*/*.py'

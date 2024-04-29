@@ -16,6 +16,9 @@ class EnvironmentSettings(BaseSettings):
     DATABASE_PATH: str
     DEBUG_MODE: bool
     CALORIE_NINJAS_API_KEY: str
+    JWT_SECRET_KEY: str
+    JWT_REFRESH_SECRET_KEY: str
+    ALGORITHM: str
 
     class Config:
         env_file = get_env_filename()

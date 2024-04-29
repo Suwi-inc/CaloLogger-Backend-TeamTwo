@@ -7,7 +7,7 @@ from app.schemas.pydantic.WeightSchema import (
 )
 from app.services.WeightService import WeightService
 
-from AuthRouter import get_current_user_id
+from app.routers.v1.AuthRouter import get_current_user_id
 
 WeightRouter = APIRouter(
     prefix="/v1/weight", tags=["weight"]

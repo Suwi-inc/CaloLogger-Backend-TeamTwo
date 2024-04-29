@@ -22,11 +22,7 @@ from schemas.pydantic.UserSchema import (
     TokenSchema,
 )
 
-load_dotenv(".env")
-
-JWT_SECRET_KEY = os.environ.get("JWT_SECRET_KEY")
-JWT_REFRESH_SECRET_KEY = os.environ.get("JWT_REFRESH_SECRET_KEY")
-ALGORITHM = "HS256"
+env = get_environment_variables()
 
 router = APIRouter()
 
@@ -84,8 +80,8 @@ async def login(data: OAuth2PasswordRequestForm = Depends(), session=Depends(get
         )
 
     return {
-        "access_token": create_access_token(user.username, JWT_SECRET_KEY),
-        "refresh_token": create_refresh_token(user.username, JWT_REFRESH_SECRET_KEY),
+        "access_token": create_access_token(user.username, env.JWT_SECRET_KEY),
+        "refresh_token": create_refresh_token(user.username, env.JWT_REFRESH_SECRET_KEY),
         "user_id": user.id,
     }
 
@@ -94,7 +90,7 @@ async def get_current_user(
     token: str = Depends(reuseable_oauth), session=Depends(get_db)
 ) -> UserInfo:
     try:
-        payload = jwt.decode(token, JWT_SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(token, env.JWT_SECRET_KEY, algorithms=[env.ALGORITHM])
         token_data = TokenPayload(**payload)
 
     except jwt.ExpiredSignatureError:

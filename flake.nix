@@ -15,11 +15,31 @@
       let
         # see https://github.com/nix-community/poetry2nix/tree/master#api for more functions and examples.
         pkgs = nixpkgs.legacyPackages.${system};
-        inherit (poetry2nix.lib.mkPoetry2Nix { inherit pkgs; }) mkPoetryApplication;
+        inherit (poetry2nix.lib.mkPoetry2Nix { inherit pkgs; }) mkPoetryApplication defaultPoetryOverrides;
       in
       {
         packages = {
-          myapp = mkPoetryApplication { projectDir = self; };
+          myapp = mkPoetryApplication { 
+          projectDir = self; 
+
+  overrides = defaultPoetryOverrides.extend
+    (self: super: {
+      chromedriver-autoinstaller = super.chromedriver-autoinstaller.overridePythonAttrs
+      (
+        old: {
+          buildInputs = (old.buildInputs or [ ]) ++ [ super.setuptools ];
+        }
+      );
+      webdriver-manager = super.webdriver-manager.overridePythonAttrs
+      (
+        old: {
+          buildInputs = (old.buildInputs or [ ]) ++ [ super.setuptools ];
+        }
+      );
+    });
+
+
+          };
           default = self.packages.${system}.myapp;
         };
 

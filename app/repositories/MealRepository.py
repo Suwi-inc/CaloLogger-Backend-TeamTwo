@@ -34,12 +34,12 @@ class MealRepository:
             meal_id
         )
 
-    def create(self, meal: Iterable[Meal]):
-        self.db.add_all(meal)
+    def create(self, meals: Iterable[Meal]):
+        self.db.add_all(meals)
         self.db.commit()
         # self.db.refresh(meal)
 
-    def delete(self, author: Meal) -> None:
-        self.db.delete(author)
+    def delete(self, meal: Meal) -> None:
+        self.db.delete(meal)
         self.db.commit()
         self.db.flush()

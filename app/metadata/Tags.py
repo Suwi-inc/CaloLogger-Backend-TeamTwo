@@ -7,4 +7,8 @@ Tags = [
         "name": "weight",
         "description": "Contains CRUD operation on Weight",
     },
+    {
+        "name": "auth",
+        "description": "Auth operations"
+    },
 ]

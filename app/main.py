@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from app.configs.Environment import get_environment_variables
 from app.metadata.Tags import Tags
 from app.models.BaseModel import init
+from app.routers.v1.AuthRouter import router as AuthRouter
 from app.routers.v1.WeightRouter import WeightRouter
 from app.routers.v1.MealRouter import MealRouter
 from fastapi.middleware.cors import CORSMiddleware
@@ -31,7 +32,7 @@ app.add_middleware(
 # Add Routers
 app.include_router(MealRouter)
 app.include_router(WeightRouter)
-# app.include_router(UserRouter)
+app.include_router(AuthRouter)
 
 # Initialise Data Model Attributes
 init()

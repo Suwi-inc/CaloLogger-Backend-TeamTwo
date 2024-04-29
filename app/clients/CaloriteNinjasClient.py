@@ -17,5 +17,6 @@ class CalorieNinjasClient:
             url="https://api.calorieninjas.com/v1/nutrition",
             params={'query': meals_string},
             headers={"X-Api-Key": env.CALORIE_NINJAS_API_KEY}
+            timeout=5
         ).json()['items']
         return [str(item) for item in items]

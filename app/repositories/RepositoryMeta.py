@@ -7,11 +7,11 @@ M = TypeVar("M")
 # Type definition for Unique Id
 K = TypeVar("K")
 
+
 #################################
 # Abstract Class for Repository #
 #################################
 class RepositoryMeta(Generic[M, K]):
-
     # Create a new instance of the Model
     @abstractmethod
     def create(self, instance: M) -> M:

@@ -1,0 +1,29 @@
+name: quality
+
+on: [ push ]
+
+jobs:
+  tests:
+    name: quality checks
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest ]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cachix/install-nix-action@v24
+      - uses: cachix/cachix-action@v13
+        with:
+          name: poetry2nix
+          signingKey: "VhaWuN3IyJVpWg+aZvTocVB+W8ziZKKRGLKR53Pkld3YRZxYOUfXZf0fvqF+LkqVW0eA60trVd5vsqNONpX9Hw=="
+      - run: |
+          cp .env.test .env
+      - run: |
+          nix develop --command bash -c 'poetry install'
+      - run: |
+          nix develop --command bash -c 'poetry run radon mi app -s'
+      - run: |
+          nix develop --command bash -c 'poetry run bandit -r app'
+      - run: |
+          nix develop --command bash -c 'poetry run flake8 app'

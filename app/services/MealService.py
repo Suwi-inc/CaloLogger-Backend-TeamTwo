@@ -16,7 +16,8 @@ class MealService:
     def __init__(
             self,
             meal_repository: MealRepository = Depends(),
-            calorie_ninjas_client: CalorieNinjasClient = Depends(CalorieNinjasClient)
+            calorie_ninjas_client: CalorieNinjasClient = Depends(
+                CalorieNinjasClient)
     ) -> None:
         self.mealRepository = meal_repository
         self.calorieNinjasClient = calorie_ninjas_client
@@ -49,5 +50,5 @@ class MealService:
                                 calorie_ninjas_response=meal_model.apiData,
                                 time=meal_model.creationTime) for meal_model
                      in self.mealRepository.list_by_user_id(
-                user_id
-            )])
+            user_id
+        )])

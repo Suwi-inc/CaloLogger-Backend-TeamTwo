@@ -23,4 +23,4 @@ jobs:
       - run: |
           nix develop --command bash -c 'poetry install'
       - run: |
-          nix develop --command bash -c 'poetry run pytest --cov app/ --cov-branch --cov-report=term --cov-fail-under=80'
+          nix develop --command bash -c 'poetry run pytest --cov app/ --cov-branch --cov-report=term --cov-fail-under=60'

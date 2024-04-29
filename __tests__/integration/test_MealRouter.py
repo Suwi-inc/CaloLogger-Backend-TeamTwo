@@ -28,6 +28,12 @@ class TestMealRouter(TestCase):
         app.dependency_overrides[CalorieNinjasClient] = lambda _: self.calorie_ninjas_client
         self.client = TestClient(app)
 
+
+    def tearDown(self):
+        super().tearDown()
+        app.dependency_overrides[CalorieNinjasClient] = None
+
+    def register_and_get_token(self):
         username = 'username'
         password = 'password'
 
@@ -36,17 +42,14 @@ class TestMealRouter(TestCase):
             json={'username': username, 'password': password},
             headers={'accept': 'application/json'})
 
-        self.token = self.client.post(
+        return self.client.post(
             url="/v1/auth/login",
             data={'grant_type': '', 'username': username, 'password': password, 'scope': '', 'client_id': '',
                   'client_secret': ''},
             headers={'accept': 'application/json'}).json()['access_token']
 
-    def tearDown(self):
-        super().tearDown()
-        app.dependency_overrides[CalorieNinjasClient] = None
-
     def test_create(self):
+        token = self.register_and_get_token()
         self.calorie_ninjas_client.get_meal_descriptions = \
             MagicMock(return_value=["{\"some\": \"json 1\"}", "{\"some\": \"json 2\"}"])
         start_time = datetime.datetime.utcnow()
@@ -54,7 +57,7 @@ class TestMealRouter(TestCase):
         resp = self.client.post(
             "/v1/meal/",
             params=QueryParams({'args': '...', "_": "...", "kwargs": "...", 'name': 'Omelet'}),
-            headers={'accept': 'application/json', 'Authorization': f'Bearer {self.token}'}, )
+            headers={'accept': 'application/json', 'Authorization': f'Bearer {token}'}, )
 
         assert resp.status_code == 201
         print(resp.text)

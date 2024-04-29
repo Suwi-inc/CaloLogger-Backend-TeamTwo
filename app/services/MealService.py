@@ -16,7 +16,7 @@ class MealService:
     def __init__(
             self,
             meal_repository: MealRepository = Depends(),
-            calorie_ninjas_client: CalorieNinjasClient = Depends()
+            calorie_ninjas_client: CalorieNinjasClient = Depends(CalorieNinjasClient)
     ) -> None:
         self.mealRepository = meal_repository
         self.calorieNinjasClient = calorie_ninjas_client

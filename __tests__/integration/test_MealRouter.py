@@ -20,6 +20,7 @@ class TestMealRouter(TestCase):
         con = sqlite3.connect("test.db")
         cur = con.cursor()
         cur.execute("DELETE FROM meals")
+        cur.execute("DELETE FROM user")
         con.commit()
         con.close()
 
@@ -27,19 +28,33 @@ class TestMealRouter(TestCase):
         app.dependency_overrides[CalorieNinjasClient] = lambda _: self.calorie_ninjas_client
         self.client = TestClient(app)
 
+        username = 'username'
+        password = 'password'
+
+        self.client.post(
+            "/v1/auth/signup",
+            json={'username': username, 'password': password},
+            headers={'accept': 'application/json'})
+
+        self.token = self.client.post(
+            url="/v1/auth/login",
+            data={'grant_type': '', 'username': username, 'password': password, 'scope': '', 'client_id': '',
+                  'client_secret': ''},
+            headers={'accept': 'application/json'}).json()['access_token']
+
     def tearDown(self):
         super().tearDown()
         app.dependency_overrides[CalorieNinjasClient] = None
 
     def test_create(self):
         self.calorie_ninjas_client.get_meal_descriptions = \
-            MagicMock(return_value=["{some json 1}", "{some json2}"])
+            MagicMock(return_value=["{\"some\": \"json 1\"}", "{\"some\": \"json 2\"}"])
         start_time = datetime.datetime.utcnow()
 
         resp = self.client.post(
             "/v1/meal/",
             params=QueryParams({'args': '...', "_": "...", "kwargs": "...", 'name': 'Omelet'}),
-            headers={'accept': 'application/json'}, )
+            headers={'accept': 'application/json', 'Authorization': f'Bearer {self.token}'}, )
 
         assert resp.status_code == 201
         print(resp.text)
@@ -50,8 +65,9 @@ class TestMealRouter(TestCase):
         con = sqlite3.connect("test.db")
         cur = con.cursor()
         res = cur.execute("SELECT * FROM meals").fetchall()
+        user_id = cur.execute("SELECT * FROM user").fetchone()[0]
         assert len(res) == 2
-        for meal, api_json in zip(res, ["{some json 1}", "{some json2}"]):
-            assert meal[1] == 1  # TODO: user id from auth
+        for meal, api_json in zip(res, ["{\"some\": \"json 1\"}", "{\"some\": \"json 2\"}"]):
+            assert meal[1] == user_id
             assert is_time_between(start_time, end_time,
                                    datetime.datetime.strptime(meal[2], "%Y-%m-%d %H:%M:%S.%f"))

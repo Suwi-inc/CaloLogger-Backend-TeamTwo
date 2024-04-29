@@ -5,9 +5,8 @@ from sqlalchemy import (
     String,
     DateTime
 )
-from sqlalchemy.orm import relationship
 
-from models.BaseModel import EntityMeta
+from app.models.BaseModel import EntityMeta
 
 
 class Meal(EntityMeta):
@@ -18,4 +17,5 @@ class Meal(EntityMeta):
     creationTime = Column(DateTime(), nullable=False)
     apiData = Column(String(999), nullable=False)
 
+    # noinspection PyTypeChecker
     PrimaryKeyConstraint(id)

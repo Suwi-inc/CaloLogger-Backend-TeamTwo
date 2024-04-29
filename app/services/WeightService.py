@@ -2,8 +2,8 @@ from typing import List
 
 from fastapi import Depends
 
-from repositories.WeightRepository import WeightRepository
-from schemas.pydantic.WeightSchema import WeightSchema
+from app.repositories.WeightRepository import WeightRepository
+from app.schemas.pydantic.WeightSchema import WeightSchema
 
 
 class WeightService:

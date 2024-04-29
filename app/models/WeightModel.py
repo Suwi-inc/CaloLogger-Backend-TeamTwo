@@ -5,7 +5,7 @@ from sqlalchemy import (
     DateTime, Float
 )
 
-from models.BaseModel import EntityMeta
+from app.models.BaseModel import EntityMeta
 
 
 class Weight(EntityMeta):
@@ -16,4 +16,5 @@ class Weight(EntityMeta):
     creationTime = Column(DateTime(), nullable=False)
     kg = Column(Float)
 
+    # noinspection PyTypeChecker
     PrimaryKeyConstraint(id)

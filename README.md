@@ -30,22 +30,22 @@ TODO
 - Run the application from command prompt:
 
   ```sh
-  $ uvicorn main:app --reload
+  $ poetry run uvicorn app.main:app --reload
   ```
 
 - Open `localhost:8000/docs` for API Documentation
 
 ## Testing TODO
 
-For Testing, `unittest` module is used for Test Suite and Assertion, whereas `pytest` is being used for Test Runner and Coverage Reporter.
+For Testing,
 
 - Run the following command to initiate test:
   ```sh
-  $ pipenv run pytest
+  $ poetry run pytest
   ```
 - To include Coverage Reporting as well:
   ```sh
-  $ pipenv run pytest --cov-report xml --cov .
+  $ poetry run pytest --cov-report xml --cov app/
   ```
 
 ## License

@@ -2,10 +2,10 @@ from typing import List
 
 from fastapi import APIRouter, Depends, status
 
-from schemas.pydantic.WeightSchema import (
+from app.schemas.pydantic.WeightSchema import (
     WeightSchema,
 )
-from services.WeightService import WeightService
+from app.services.WeightService import WeightService
 
 WeightRouter = APIRouter(
     prefix="/v1/weight", tags=["weight"]

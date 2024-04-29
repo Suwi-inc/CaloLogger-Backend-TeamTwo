@@ -5,14 +5,11 @@ from pydantic import BaseModel
 class UserSchema(BaseModel):  # also can be used for creation
     username: str
     password: str
-    factory: int
 
 
 class UserInfo(BaseModel):
     userId: int
     username: str
-    factory: int
-
 
 class UserUpdate(UserSchema):
     userId: int

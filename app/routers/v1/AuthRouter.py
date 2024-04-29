@@ -6,16 +6,17 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import jwt
 
-from auth import (
+from app.configs.Environment import get_environment_variables
+from app.routers.v1.auth import (
     create_access_token,
     create_refresh_token,
     get_hashed_password,
     verify_password,
 )
-from db import get_db
-from models import User
+from app.configs.Database import get_db_connection
+from app.models.UserModel import User
 
-from schemas.pydantic.UserSchema import (
+from app.schemas.pydantic.UserSchema import (
     UserSchema,
     UserInfo,
     TokenPayload, 
@@ -24,15 +25,17 @@ from schemas.pydantic.UserSchema import (
 
 env = get_environment_variables()
 
-router = APIRouter()
+router = APIRouter(
+    prefix="/v1/auth", tags=["auth"]
+)
 
 # engine = get_engine()
 # session = Session(engine)
 
-reuseable_oauth = OAuth2PasswordBearer(tokenUrl="/api/auth/login", scheme_name="JWT")
+reuseable_oauth = OAuth2PasswordBearer(tokenUrl="/v1/auth/login", scheme_name="JWT")
 
 @router.post("/signup", summary="Create a new user", response_model=UserSchema)
-async def create_user(data: UserSchema, session=Depends(get_db)):
+async def create_user(data: UserSchema, session=Depends(get_db_connection)):
     user = session.query(User).filter(User.username == data.username).first()
     if user is not None:
         raise HTTPException(
@@ -42,22 +45,16 @@ async def create_user(data: UserSchema, session=Depends(get_db)):
     user = User(
         username=data.username,
         password=get_hashed_password(data.password),
-        first_name=data.first_name,
-        second_name=data.second_name,
-        factory=data.factory,
     )
 
     session.add(user)
     session.commit()
 
     new_user = session.query(User).filter(User.username == data.username).first()
-    return {
-        "username": new_user.username,
-        "password": new_user.password,
-        "first_name": new_user.first_name,
-        "second_name": new_user.second_name,
-        "factory": new_user.factory,
-    }
+    return UserSchema(
+        username=new_user.username,
+        password=new_user.password
+    )
 
 
 @router.post(
@@ -65,7 +62,7 @@ async def create_user(data: UserSchema, session=Depends(get_db)):
     summary="Create access and refresh tokens for user",
     response_model=TokenSchema,
 )
-async def login(data: OAuth2PasswordRequestForm = Depends(), session=Depends(get_db)):
+async def login(data: OAuth2PasswordRequestForm = Depends(), session=Depends(get_db_connection)):
     logging.info(f"Data received: {data}")
     user = session.query(User).filter(User.username == data.username).first()
     if user is None:
@@ -82,15 +79,18 @@ async def login(data: OAuth2PasswordRequestForm = Depends(), session=Depends(get
     return {
         "access_token": create_access_token(user.username, env.JWT_SECRET_KEY),
         "refresh_token": create_refresh_token(user.username, env.JWT_REFRESH_SECRET_KEY),
-        "user_id": user.id,
+        "user_id": user.userId,
     }
 
 
 async def get_current_user(
-    token: str = Depends(reuseable_oauth), session=Depends(get_db)
+    token: str = Depends(reuseable_oauth), session=Depends(get_db_connection)
 ) -> UserInfo:
     try:
+        print(token)
+        print(env.JWT_SECRET_KEY)
         payload = jwt.decode(token, env.JWT_SECRET_KEY, algorithms=[env.ALGORITHM])
+        print(payload)
         token_data = TokenPayload(**payload)
 
     except jwt.ExpiredSignatureError:
@@ -100,7 +100,8 @@ async def get_current_user(
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    except jwt.JWTError:
+    except jwt.JWTError as er:
+        print(er)
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Could not validate credentials",
@@ -116,16 +117,13 @@ async def get_current_user(
         )
 
     return UserInfo(
-        id=user.id,
-        username=user.username,
-        first_name=user.first_name,
-        second_name=user.second_name,
-        factory=user.factory,
+        userId=user.userId,
+        username=user.username
     )
 
 
-def get_current_user_id(user: user = Depends(get_current_user)):
-    return user.id
+def get_current_user_id(user: UserInfo = Depends(get_current_user)):
+    return user.userId
 
 @router.get(
     "/me", summary="Get details of currently logged in user", response_model=UserInfo

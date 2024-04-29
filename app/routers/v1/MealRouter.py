@@ -7,7 +7,7 @@ from app.schemas.pydantic.MealSchema import (
 )
 from app.services.MealService import MealService
 
-from AuthRouter import get_current_user_id
+from app.routers.v1.AuthRouter import get_current_user_id
 
 MealRouter = APIRouter(
     prefix="/v1/meal", tags=["meal"]

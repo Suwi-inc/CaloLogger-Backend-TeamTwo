@@ -1,25 +1,24 @@
-from typing import List, Optional, Iterable, Type
-
-from fastapi import Depends
-from sqlalchemy.orm import Session, lazyload, Query
+from typing import List, Iterable
 
 from configs.Database import (
     get_db_connection,
 )
+from fastapi import Depends
 from models.UserModel import User
+from sqlalchemy.orm import Session, Query
 
 
 class UserRepository:
     db: Session
 
     def __init__(
-        self, db: Session = Depends(get_db_connection)
+            self, db: Session = Depends(get_db_connection)
     ) -> None:
         self.db = db
 
     def list_by_user_id(
-        self,
-        user_id: int
+            self,
+            user_id: int
     ) -> List[User]:
         query: Query[User] = self.db.query(User)
 

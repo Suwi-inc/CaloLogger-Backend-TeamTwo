@@ -1,10 +1,7 @@
-import datetime
 from typing import List
 
-import requests
-from fastapi import Depends, HTTPException
-
 from configs.Environment import get_environment_variables
+from fastapi import HTTPException
 from models.UserModel import User
 from repositories.UserRepository import UserRepository
 from schemas.pydantic.UserSchema import UserSchema
@@ -12,7 +9,8 @@ from schemas.pydantic.UserSchema import UserSchema
 # Runtime Environment Configuration
 env = get_environment_variables()
 
-class UserService :
+
+class UserService:
     def __init__(self, userRepository: UserRepository) -> None:
         self.userRepository = userRepository
 
@@ -88,4 +86,3 @@ class UserService :
                 status_code=404, detail="User not found"
             )
         return user
-    

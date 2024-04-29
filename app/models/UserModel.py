@@ -2,8 +2,7 @@ from sqlalchemy import (
     Column,
     Integer,
     PrimaryKeyConstraint,
-    String,
-    DateTime
+    String
 )
 
 from app.models.BaseModel import EntityMeta

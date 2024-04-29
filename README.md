@@ -30,7 +30,7 @@ TODO
 - Run the application from command prompt:
 
   ```sh
-  $ uvicorn main:app --reload
+  $ uvicorn app.main:app --reload
   ```
 
 - Open `localhost:8000/docs` for API Documentation

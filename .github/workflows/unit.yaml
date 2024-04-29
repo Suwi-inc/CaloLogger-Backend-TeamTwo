@@ -1,0 +1,29 @@
+name: unit-tests
+
+on: [push]
+
+jobs:
+  tests:
+    name: Unit tests
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: git checkout
+        uses: actions/checkout@v3
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@main
+      - uses: DeterminateSystems/magic-nix-cache-action@main
+      - name: Check Nixpkgs inputs
+        uses: DeterminateSystems/flake-checker-action@main
+        with:
+          fail-mode: true
+
+      # Nix-specific logic begins here
+      - run: |
+          cp .env.test .env
+      - run: |
+          nix develop --command \
+            poetry run pytest __tests__/*/*.py

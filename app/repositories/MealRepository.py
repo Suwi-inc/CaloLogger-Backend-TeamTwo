@@ -1,12 +1,12 @@
-from typing import List, Optional, Iterable, Type
+from typing import List, Iterable
 
 from fastapi import Depends
-from sqlalchemy.orm import Session, lazyload, Query
+from sqlalchemy.orm import Session, Query
 
-from configs.Database import (
+from app.configs.Database import (
     get_db_connection,
 )
-from models.MealModel import Meal
+from app.models.MealModel import Meal
 
 
 class MealRepository:
@@ -21,6 +21,7 @@ class MealRepository:
         self,
         user_id: int
     ) -> List[Meal]:
+        # noinspection PyTypeChecker
         query: Query[Meal] = self.db.query(Meal)
 
         query = query.filter_by(userId=user_id)

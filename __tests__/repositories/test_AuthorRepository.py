@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from unittest import TestCase
 from unittest.mock import create_autospec, patch
 
-from repositories.MealRepository import MealRepository
+from app.repositories.MealRepository import MealRepository
 
 
 class TestAuthorRepository(TestCase):

@@ -2,10 +2,10 @@ from typing import List
 
 from fastapi import APIRouter, Depends, status
 
-from schemas.pydantic.MealSchema import (
+from app.schemas.pydantic.MealSchema import (
     MealSchema,
 )
-from services.MealService import MealService
+from app.services.MealService import MealService
 
 from AuthRouter import get_current_user_id
 
@@ -20,8 +20,8 @@ MealRouter = APIRouter(
     status_code=status.HTTP_200_OK)
 def gel_all(
         current_user_id: int = Depends(get_current_user_id),
-        mealService: MealService = Depends()):
-    return mealService.list_by_user_id(current_user_id)
+        meal_service: MealService = Depends()):
+    return meal_service.list_by_user_id(current_user_id)
 
 
 @MealRouter.delete(
@@ -48,8 +48,8 @@ def gel_all(
 def delete(
         meal_id: int,
         current_user_id: int = Depends(get_current_user_id),
-        mealService: MealService = Depends()):
-    mealService.delete(meal_id, current_user_id)
+        meal_service: MealService = Depends()):
+    meal_service.delete(meal_id, current_user_id)
     return 'ok'
 
 
@@ -61,7 +61,7 @@ def delete(
 def create(
         name: str,
         current_user_id: int = Depends(get_current_user_id),
-        mealService: MealService = Depends(),
+        meal_service: MealService = Depends(),
 ):
-    mealService.create(current_user_id, name)
+    meal_service.create(current_user_id, name)
     return "ok"

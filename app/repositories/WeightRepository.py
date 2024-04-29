@@ -4,8 +4,8 @@ from typing import Type
 from fastapi import Depends
 from sqlalchemy.orm import Session
 
-from configs.Database import get_db_connection
-from models.WeightModel import Weight
+from app.configs.Database import get_db_connection
+from app.models.WeightModel import Weight
 
 
 class WeightRepository:
@@ -20,7 +20,7 @@ class WeightRepository:
     def add_weight(self, user_id: int, kg: float) -> Weight:
         weight = Weight(
             userId=user_id,
-            creationTime=datetime.now(),
+            creationTime=datetime.utcnow(),
             kg=kg
         )
         self.db.add(weight)

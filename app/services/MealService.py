@@ -1,35 +1,32 @@
 import datetime
 from typing import List
 
-import requests
 from fastapi import Depends, HTTPException
 
-from configs.Environment import get_environment_variables
-from models.MealModel import Meal
-from repositories.MealRepository import MealRepository
-from schemas.pydantic.MealSchema import MealSchema
-
-# Runtime Environment Configuration
-env = get_environment_variables()
+from app.clients.CaloriteNinjasClient import CalorieNinjasClient
+from app.models.MealModel import Meal
+from app.repositories.MealRepository import MealRepository
+from app.schemas.pydantic.MealSchema import MealSchema
 
 
 class MealService:
     mealRepository: MealRepository
+    calorieNinjasClient: CalorieNinjasClient
 
     def __init__(
-            self, authorRepository: MealRepository = Depends()
+            self,
+            meal_repository: MealRepository = Depends(),
+            calorie_ninjas_client: CalorieNinjasClient = Depends(
+                CalorieNinjasClient)
     ) -> None:
-        self.mealRepository = authorRepository
+        self.mealRepository = meal_repository
+        self.calorieNinjasClient = calorie_ninjas_client
 
     def create(self, current_user_id: int, name: str):
-        api_data = requests.get(
-            url="https://api.calorieninjas.com/v1/nutrition",
-            params={'query': name},
-            headers={"X-Api-Key": env.CALORIE_NINJAS_API_KEY}
-        ).json()['items']
+        api_data = self.calorieNinjasClient.get_meal_descriptions(name)
 
-        creation_time = datetime.datetime.now()
-        meals = [Meal(apiData=str(meal_response), creationTime=creation_time,
+        creation_time = datetime.datetime.utcnow()
+        meals = [Meal(apiData=meal_response, creationTime=creation_time,
                       userId=current_user_id) for meal_response in api_data]
         print(meals)
         return self.mealRepository.create(meals)
@@ -53,5 +50,5 @@ class MealService:
                                 calorie_ninjas_response=meal_model.apiData,
                                 time=meal_model.creationTime) for meal_model
                      in self.mealRepository.list_by_user_id(
-                user_id
-            )])
+            user_id
+        )])

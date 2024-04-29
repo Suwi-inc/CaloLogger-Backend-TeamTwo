@@ -26,9 +26,6 @@ router = APIRouter(
     prefix="/v1/auth", tags=["auth"]
 )
 
-# engine = get_engine()
-# session = Session(engine)
-
 reuseable_oauth = OAuth2PasswordBearer(tokenUrl="/v1/auth/login",
                                        scheme_name="JWT")
 

@@ -2,16 +2,16 @@ from typing import List
 
 from fastapi import APIRouter, Depends, status
 
+from app.routers.v1.AuthRouter import get_current_user_id
 from app.schemas.pydantic.WeightSchema import (
     WeightSchema,
 )
 from app.services.WeightService import WeightService
 
-from app.routers.v1.AuthRouter import get_current_user_id
-
 WeightRouter = APIRouter(
     prefix="/v1/weight", tags=["weight"]
 )
+
 
 @WeightRouter.get(
     "/",

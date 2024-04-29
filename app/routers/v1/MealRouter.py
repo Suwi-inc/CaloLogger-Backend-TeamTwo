@@ -2,12 +2,11 @@ from typing import List
 
 from fastapi import APIRouter, Depends, status
 
+from app.routers.v1.AuthRouter import get_current_user_id
 from app.schemas.pydantic.MealSchema import (
     MealSchema,
 )
 from app.services.MealService import MealService
-
-from app.routers.v1.AuthRouter import get_current_user_id
 
 MealRouter = APIRouter(
     prefix="/v1/meal", tags=["meal"]

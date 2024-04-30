@@ -1,9 +1,9 @@
-name: tests
+name: local-tests
 
 on: [ push ]
 
 jobs:
-  tests:
+  local-tests:
     name: Unit tests
     strategy:
       fail-fast: false
@@ -22,4 +22,4 @@ jobs:
       - run: |
           nix develop --command bash -c 'poetry install'
       - run: |
-          nix develop --command bash -c 'poetry run pytest --cov app/ --cov-branch --cov-report=term --cov-fail-under=80'
+          nix develop --command bash -c 'poetry run pytest ./__tests__/local/ --cov app/ --cov-branch --cov-report=term --cov-fail-under=80'

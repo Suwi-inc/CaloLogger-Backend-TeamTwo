@@ -20,32 +20,18 @@
       {
         packages = {
           myapp = mkPoetryApplication { 
-          projectDir = self; 
-
-  overrides = defaultPoetryOverrides.extend
-    (self: super: {
-      chromedriver-autoinstaller = super.chromedriver-autoinstaller.overridePythonAttrs
-      (
-        old: {
-          buildInputs = (old.buildInputs or [ ]) ++ [ super.setuptools ];
-        }
-      );
-      webdriver-manager = super.webdriver-manager.overridePythonAttrs
-      (
-        old: {
-          buildInputs = (old.buildInputs or [ ]) ++ [ super.setuptools ];
-        }
-      );
-    });
-
-
+          projectDir = self;
           };
           default = self.packages.${system}.myapp;
         };
 
         devShells.default = pkgs.mkShell {
           inputsFrom = [ self.packages.${system}.myapp ];
-          packages = [ pkgs.poetry ];
+          packages = [
+            pkgs.poetry
+            pkgs.geckodriver
+            pkgs.chromedriver
+            ];
         };
       });
 }

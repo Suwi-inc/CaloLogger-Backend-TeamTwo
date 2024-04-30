@@ -6,7 +6,7 @@ from unittest.mock import MagicMock
 from fastapi.testclient import TestClient
 from httpx import QueryParams
 
-from __tests__.common.DatetimeHelpers import is_time_between
+from __tests__.local.common.DatetimeHelpers import is_time_between
 from app.clients.CaloriteNinjasClient import CalorieNinjasClient
 from app.main import app
 

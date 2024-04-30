@@ -5,7 +5,7 @@ from unittest.mock import create_autospec, MagicMock
 import pytest
 from fastapi import HTTPException
 
-from __tests__.common.DatetimeHelpers import is_time_between
+from __tests__.local.common.DatetimeHelpers import is_time_between
 from app.clients.CaloriteNinjasClient import CalorieNinjasClient
 from app.repositories.MealRepository import MealRepository
 from app.services.MealService import MealService

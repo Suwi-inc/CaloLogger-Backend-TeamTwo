@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from app.models.WeightModel import Weight
 from app.repositories.WeightRepository import WeightRepository
-from __tests__.common.DatetimeHelpers import is_time_between
+from __tests__.local.common.DatetimeHelpers import is_time_between
 
 
 class TestWeightRepository(TestCase):

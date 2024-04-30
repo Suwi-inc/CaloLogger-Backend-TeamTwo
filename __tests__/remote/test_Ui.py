@@ -4,7 +4,7 @@ from typing import List
 from unittest import TestCase
 
 from selenium import webdriver
-from selenium.webdriver.chrome.options import Options as ChromeOptions
+# from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.common.by import By
 
@@ -22,7 +22,7 @@ class MealInfo:
         return self.name, self.time, self.stats
 
 
-class TestWeightService(TestCase):
+class TestUi(TestCase):
 
     def get_meal_info_by_index(self, driver: webdriver.Firefox, index: int) -> MealInfo:
         print(index)
@@ -46,9 +46,8 @@ class TestWeightService(TestCase):
         all_meal_infos = list([self.get_meal_info_by_index(driver, i) for i in range(len(all_meals))])
 
         while len(all_meals) >= 1:
-            driver.find_element(By.CSS_SELECTOR,
-                                "div.MuiGrid-root:nth-child(1) > div:nth-child(1) > div:nth-child(2) > "
-                                "button:nth-child(1)").click()
+            meal_1 = all_meals[0]
+            meal_1.find_elements(By.CLASS_NAME, "MuiButtonBase-root")[0].click()
 
             # Wait for removal
             time.sleep(1)
@@ -65,16 +64,16 @@ class TestWeightService(TestCase):
 
     def test_full_workflow(self):
         options = FirefoxOptions()
-        # options.add_argument('--headless')  # Comment for visible browser
+        options.add_argument('--headless')  # Comment for visible browser
         driver = webdriver.Firefox(
             options=options)
-        driver.get('http://localhost:3000/register')  # TODO: remote address
+        driver.get('https://calo.rinri-d.xyz/register')
 
-        time.sleep(30)
+        time.sleep(2)
 
         random_gen = random.Random()
-        test_name = str(random_gen.randint(1,1000000))
-        test_password = str(random_gen.randint(1,1000000))
+        test_name = str(random_gen.randint(1, 1000000))
+        test_password = str(random_gen.randint(1, 1000000))
 
         self.signup(driver, test_name, test_password)
 
@@ -88,11 +87,11 @@ class TestWeightService(TestCase):
 
         self.gradually_delete_all_meals_and_assert_expected_behaviour(driver)
 
-        meal_inputter = driver.find_element(By.CSS_SELECTOR, "#\:r9\:")
+        meal_inputter = driver.find_elements(By.CLASS_NAME, "MuiInputBase-input")[0]
         meal_inputter.send_keys("omelet and eggs")
 
-        meal_send = driver.find_element(By.XPATH,
-                                        "/html/body/div/div/div/div[2]/div[1]/form[1]/button")
+        meal_send = driver.find_elements(By.CLASS_NAME,
+                                         "MuiButtonBase-root")[1]
         meal_send.click()
 
         # Wait all interactions and update
@@ -131,21 +130,21 @@ class TestWeightService(TestCase):
         self.gradually_delete_all_meals_and_assert_expected_behaviour(driver)
 
     def login(self, driver, test_name, test_password):
-        login_inputter = driver.find_element(By.XPATH, "//*[@id=\":r5:\"]")
+        login_inputter = driver.find_elements(By.CLASS_NAME, "MuiInputBase-input")[0]
         login_inputter.click()
         login_inputter.send_keys(test_name)
-        password_inputter = driver.find_element(By.XPATH, "//*[@id=\":r7:\"]")
+        password_inputter = driver.find_elements(By.CLASS_NAME, "MuiInputBase-input")[1]
         password_inputter.click()
         password_inputter.send_keys(test_password)
-        login_button = driver.find_element(By.XPATH, '/html/body/div/main/div/form/button')
+        login_button = driver.find_elements(By.CLASS_NAME, 'MuiButtonBase-root')[0]
         login_button.click()
 
     def signup(self, driver, test_name, test_password):
-        login_inputter = driver.find_element(By.XPATH, "//*[@id=\":r1:\"]")
+        login_inputter = driver.find_elements(By.CLASS_NAME, "MuiInputBase-input")[0]
         login_inputter.click()
         login_inputter.send_keys(test_name)
-        password_inputter = driver.find_element(By.XPATH, "//*[@id=\":r3:\"]")
+        password_inputter = driver.find_elements(By.CLASS_NAME, "MuiInputBase-input")[1]
         password_inputter.click()
         password_inputter.send_keys(test_password)
-        register_button = driver.find_element(By.XPATH, '/html/body/div/main/div/form/button')
+        register_button = driver.find_elements(By.CLASS_NAME, 'MuiButtonBase-root')[0]
         register_button.click()

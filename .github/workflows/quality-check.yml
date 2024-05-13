@@ -109,7 +109,7 @@ jobs:
         with:
           poetry-version: ${{ matrix.poetry-version }}
       - name: Install dependencies
-        working-directory: ./app
+        working-directory: .
         run: poetry install
       - name: Snyk setup
         uses: snyk/actions/setup@master

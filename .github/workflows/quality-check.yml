@@ -114,7 +114,7 @@ jobs:
       - name: Snyk setup
         uses: snyk/actions/setup@master
       - name: Snyk check
-        working-directory: ./app
+        working-directory: .
         run: snyk test
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}

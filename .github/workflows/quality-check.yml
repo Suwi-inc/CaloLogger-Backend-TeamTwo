@@ -1,0 +1,120 @@
+name: quality-checks-two
+on:
+  push:
+    branches:
+      - main
+jobs:
+ Flake8-Backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+      - name: Run image
+        uses: abatilo/actions-poetry@v2
+        with:
+          poetry-version: "1.7.1"
+      - name: Install dependencies 
+        working-directory: ./backend
+        run: poetry install
+      - name: Run Flake 8
+        working-directory: ./app
+        run: poetry run flake8 .
+ Backend-Tests:
+    name: Run unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+      - name: Run image
+        uses: abatilo/actions-poetry@v2
+        with:
+          poetry-version: "1.7.1"
+      - name: Install dependencies 
+        working-directory: ./app
+        run: poetry install
+      - name: Run test coverage
+        working-directory: ./app
+        run: poetry run pytest --cov=app --cov-branch --cov-report term-missing --cov-fail-under=65 tests/
+ Maintainability-index:
+    name: Check Maintainability Index
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+      - name: Setup Poetry
+        uses: abatilo/actions-poetry@v2
+        with:
+          poetry-version: "1.7.1"
+      - name: Install dependencies including Radon
+        working-directory: ./app
+        run: |
+          poetry install
+          sudo apt-get install jq  # Install jq if not available
+      - name: Check Maintainability Index
+        working-directory: ./app
+        run: |
+          MI_SCORE=$(poetry run radon mi . --json | jq '[.[] | .mi] | add / length')
+          echo "Average Maintainability Index Score: $MI_SCORE"
+          if (( $(echo "$MI_SCORE < 70" | bc -l) )); then
+            echo "Maintainability Index below threshold: $MI_SCORE"
+            exit 1
+          fi
+ Bandit:
+    name: Bandit Security Scan
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [3.11.0]
+        poetry-version: [1.7.0]
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Setup Poetry
+        uses: abatilo/actions-poetry@v2
+        with:
+          poetry-version: ${{ matrix.poetry-version }}
+      - name: Install dependencies
+        working-directory: ./app
+        run: poetry install
+      - name: Run bandit
+        working-directory: ./app
+        run: poetry run bandit .
+ Snyk:
+    name: Snyk Vulnerability Scan
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [3.11.0]
+        poetry-version: [1.7.0]
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Setup Poetry
+        uses: abatilo/actions-poetry@v2
+        with:
+          poetry-version: ${{ matrix.poetry-version }}
+      - name: Install dependencies
+        working-directory: ./app
+        run: poetry install
+      - name: Snyk setup
+        uses: snyk/actions/setup@master
+      - name: Snyk check
+        working-directory: ./app
+        run: snyk test
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}

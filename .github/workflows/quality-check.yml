@@ -16,7 +16,7 @@ jobs:
         with:
           poetry-version: "1.7.1"
       - name: Install dependencies 
-        working-directory: ./backend
+        working-directory: ./app
         run: poetry install
       - name: Run Flake 8
         working-directory: ./app
@@ -37,8 +37,8 @@ jobs:
         working-directory: ./app
         run: poetry install
       - name: Run test coverage
-        working-directory: ./app
-        run: poetry run pytest --cov=app --cov-branch --cov-report term-missing --cov-fail-under=65 tests/
+        working-directory: .
+        run: poetry run pytest --cov=app --cov-branch --cov-report term-missing --cov-fail-under=65 __tests__/
  Maintainability-index:
     name: Check Maintainability Index
     runs-on: ubuntu-latest
@@ -109,12 +109,12 @@ jobs:
         with:
           poetry-version: ${{ matrix.poetry-version }}
       - name: Install dependencies
-        working-directory: ./app
+        working-directory: .
         run: poetry install
       - name: Snyk setup
         uses: snyk/actions/setup@master
       - name: Snyk check
-        working-directory: ./app
+        working-directory: .
         run: snyk test
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
